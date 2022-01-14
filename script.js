@@ -39,6 +39,7 @@ const player = (name, symbol) => {
     const toggleActive = () => {
         _isActive ? setActive(false) : setActive(true);
     }
+
     const setActive = (active) => {
         _isActive = active;
         _isActive ? $player.classList.add('active') : $player.classList.remove('active');
@@ -81,6 +82,7 @@ const player = (name, symbol) => {
 const AIplayer = (() => {
 
     const move = () => {
+
         const $squares = document.querySelectorAll('.board div');
         const gameBoard = GameBoard.getBoard();
         const randoms = [];
@@ -91,11 +93,14 @@ const AIplayer = (() => {
         const index = randoms[Math.floor(Math.random() * randoms.length)];
         console.log(index);
 
-        $squares.forEach(square => {
-            if (square.classList.contains(`index-${index}`)) {
-                GameController.playTurn.bind(square)();
-            }
-        })
+        setTimeout(() => {
+            $squares.forEach(square => {
+                if (square.classList.contains(`index-${index}`)) {
+                    GameController.playTurn.bind(square)();
+                }
+            })
+        }, Math.random() * 800 + 400);
+        
     }
 
     return {
@@ -106,16 +111,25 @@ const AIplayer = (() => {
 
 const GameController = (() => {
     const gridSize = 3;
-    const player1 = player('p1', 'X');
-    const player2 = player('p2', 'O');
+    const player1 = player('Mike', 'X');
+    const player2 = player('Bot', 'O');
 
     const init = () => {
-        player1.setActive(true);
-        player2.setActive(false)
+        player1.setActive(Math.random() > 0.5);
+        player2.setActive(!player1.getActive());
+
+        const activePLayer = player1.getActive() ? player1 : player2;
 
         GameBoard.init();
+        DisplayController.renderModal(activePLayer.getName());
         DisplayController.renderGameBoard(gridSize);
         DisplayController.init();
+
+        if(player2.getActive()) {
+            AIplayer.move();
+            DisplayController.disableClick();
+        }
+        else DisplayController.enableClick();
     }
 
     function playTurn() {
@@ -128,9 +142,7 @@ const GameController = (() => {
         player2.toggleActive();
 
         if(player2.getActive()) {
-            setTimeout(() => {
-                AIplayer.move();
-            }, 700);
+            AIplayer.move();
             DisplayController.disableClick();
         }
         else DisplayController.enableClick();
@@ -208,6 +220,7 @@ const GameController = (() => {
 
 const DisplayController = (() => {
     const $board = document.querySelector('.board');
+    const $modal = document.querySelector('.modal');
     const $restartBtn = document.querySelector('.restart.btn');
     
     const init = () => {
@@ -215,6 +228,14 @@ const DisplayController = (() => {
         $squares.forEach(square => square.addEventListener('click', GameController.playTurn));
         
         $restartBtn.addEventListener('click', GameController.restartGame);
+    }
+
+    const renderModal = (playerName) => {
+        $modal.firstElementChild.firstElementChild.textContent = playerName;
+        $modal.classList.add('active');
+        setTimeout(() => {
+            $modal.classList.remove('active');
+        }, 1500);
     }
 
     const renderGameBoard = (gridSize) => {
@@ -250,6 +271,7 @@ const DisplayController = (() => {
 
     return {
         init,
+        renderModal,
         renderGameBoard,
         enableClick,
         disableClick,

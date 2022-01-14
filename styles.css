@@ -1,13 +1,14 @@
 
 :root {
-    --back: rgb(49, 49, 49);
-    --board-back: rgb(58, 58, 58);
+    --back: rgb(29, 29, 29);
+    --board-back: rgb(32, 32, 32);
     --board-border: rgb(255, 227, 134);
     --player-border: rgb(255, 47, 162);
     --shadow:rgba(0, 0, 0, 0.4);
     --game-symbol: rgb(255, 255, 255);
     --win: greenyellow;
-    --draw: red;
+    --draw: rgb(255, 35, 35);
+    --footer: rgb(25, 25, 25);
 }
 
 body {
@@ -20,15 +21,23 @@ body {
 .main {
     display: flex;
     flex-direction: column;
-    margin-top: 70px;
+    margin-top: 0px;
     align-items: center;
 }
 
 
-/* Heading */
+/* Header */
+
+.header {
+    background-color: var(--footer);
+    margin-bottom: 50px;
+    width: 100%;
+}
 
 .main .heading {
-    margin-bottom: 70px;
+    text-align: center;
+    margin-top: 70px;
+    margin-bottom: 40px;
     font-size: 60px;
     font-weight: 1000;
     color: var(--board-border);
@@ -44,6 +53,27 @@ body {
 
 .main .heading:hover {
     transform: rotate(5deg);
+}
+
+/* Modal */
+
+.modal {
+    opacity: 0;
+    position: fixed;
+    z-index: 5;
+    margin-top: 250px;
+    background-color: rgb(255, 227, 134, 0.1);
+    font-size: 20px;
+    padding: 10px 15px 10px;
+    border-radius: 20px 20px 0 0;
+    color: white;
+    transition: all 0.7s;
+}
+
+.modal.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(-62px);
 }
 
 /* Players */
@@ -72,6 +102,8 @@ body {
     height: 20px;
     width: auto;
     transition: all 0.3s;
+    font-size: 16px;
+    font-weight: 800;
 }
 
 
@@ -126,6 +158,7 @@ img {
     display: flex;
     flex-wrap: wrap;
     width: 300px;
+    z-index: 10;
 }
 
 .board div {
@@ -186,6 +219,61 @@ div.index-6, div.index-7, div.index-8 {
     border-radius: 50px;
     font-size: 16px;
     font-weight: 800;
+}
+
+/* Footer */
+
+.footer {
+    background-color: var(--footer);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    text-align: center;
+    padding: 12px 0 0;
+}
+
+.footer-text {
+    color: grey;
+    text-align: center;
+    font-size: 14px;
+    
+}
+
+a.left{
+    position: absolute;
+    left: 0;
+    margin-left: 100px;
+    color: var(--board-border);
+}
+
+.footer-text.right {
+    position: absolute;
+    right: 0;
+    margin-right: 100px;
+
+}
+
+a {
+    text-decoration: none;
+    color: var(--board-border);
+}
+
+a:hover {
+    color: var(--player-border);
+}
+
+.fab {
+    color: var(--board-border);
+    font-size: 20px;
+    vertical-align: middle;
+    margin-left: 8px;
+    transition: all 0.5s;
+}
+
+.fab:hover {
+    transform: scale(1.2) rotate(360deg);
+    color: var(--player-border);
 }
 
 

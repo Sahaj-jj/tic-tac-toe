@@ -11,31 +11,48 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300&display=swap" rel="stylesheet">
+    <script
+    src="https://kit.fontawesome.com/4c536a6bd5.js"
+    crossorigin="anonymous"
+  ></script>
 </head>
 <body>
     <div class="main">
-        <div class="heading">tic <span class='sec'>Tac</span> toe.</div>
+        <div class="header">
+            <div class="heading">tic <span class='sec'>Tac</span> toe.</div>
+        </div>
+        <div class="modal">
+            <span class="modal-text">
+                <span class="player-text">Bot</span> Goes First
+            </span>
+        </div>
         <div class="container">
             <div class="player player-X">
-                <div class="status">...</div>
+                <p class="status"></p>
                 <img src="icons\model.png" alt="You">
-                <div class="name">You</div>
+                <div class="name">Mike</div>
                 <div class="symbol">X</div>
             </div>
             <div class="board"></div>
             <div class="player player-O">
-                <div class="status">...</div>
+                <p class="status"></p>
                 <img src="icons\robot.png" alt="Robot">
                 <div class="name">Sentient Bot</div>
                 <div class="symbol">O</div>
             </div>
         </div>
         <div class="restart btn">Restart</div>
+        <div class="footer">
+            <a class="footer-text left" href="https://www.theodinproject.com/">The Odin Project</a>
+            <span class="footer-text">Created by Sahaj-jj </span>
+            <a href="https://github.com/sahaj-jj" target="_blank"><i class="fab fa-github"></i></a>
+            <span class="footer-text right">Icons created by 
+                <a href="https://www.flaticon.com/free-icons/face">Smashicons</a>
+            </span>
+        </div>
     </div>
     
 
     <script src="script.js"></script>
 </body>
 </html>
-
-<!-- <a href="https://www.flaticon.com/free-icons/face" title="face icons">Face icons created by Smashicons - Flaticon</a> -->
