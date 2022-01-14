@@ -3,12 +3,14 @@ const GameBoard = (() => {
     let gameBoard = Array(9);
 
     const init = () => {
-        gameBoard = Array(9);
+        for (let i = 0; i < gameBoard.length; i++) {
+            gameBoard[i] = 0;   
+        }
     }
 
     const updateBoard = (square, symbol) => {
         let pos = square.classList.value.slice(-1);
-        if (gameBoard[pos] === undefined) gameBoard[pos] = symbol;
+        if (gameBoard[pos] === 0) gameBoard[pos] = symbol;
         else return false;
 
         square.textContent = symbol;
@@ -29,7 +31,7 @@ const player = (name, symbol) => {
     let _isActive = false;
     let _name = name;
 
-    const player = document.querySelector(`.player-${symbol}`);
+    const $player = document.querySelector(`.player-${symbol}`);
 
     const getSymbol = () => _symbol;
     const getActive = () => _isActive;
@@ -39,7 +41,29 @@ const player = (name, symbol) => {
     }
     const setActive = (active) => {
         _isActive = active;
-        _isActive ? player.classList.add('active') : player.classList.remove('active');
+        _isActive ? $player.classList.add('active') : $player.classList.remove('active');
+    }
+
+    const setWinner = () => {
+        $player.classList.add('winner');
+        $player.firstElementChild.textContent = 'Winner';
+    }
+
+    const setDraw = () => {
+        $player.classList.add('draw');
+        $player.classList.remove('active');
+        console.log($player.firstElementChild);
+        $player.firstElementChild.textContent = 'Draw';
+    }
+
+    const reset = () => {
+        if ($player.classList.contains('winner')) {
+            $player.classList.remove('winner');
+        }
+        if ($player.classList.contains('draw')) {
+            $player.classList.remove('draw');
+        }
+        $player.firstElementChild.textContent = '';
     }
 
     return {
@@ -48,8 +72,36 @@ const player = (name, symbol) => {
         getName,
         toggleActive,
         setActive,
+        setWinner,
+        setDraw,
+        reset,
     };
 }
+
+const AIplayer = (() => {
+
+    const move = () => {
+        const $squares = document.querySelectorAll('.board div');
+        const gameBoard = GameBoard.getBoard();
+        const randoms = [];
+        for (let i = 0; i < gameBoard.length; i++) {
+            if(!gameBoard[i]) randoms.push(i);  
+        }
+
+        const index = randoms[Math.floor(Math.random() * randoms.length)];
+        console.log(index);
+
+        $squares.forEach(square => {
+            if (square.classList.contains(`index-${index}`)) {
+                GameController.playTurn.bind(square)();
+            }
+        })
+    }
+
+    return {
+        move,
+    };
+})();
 
 
 const GameController = (() => {
@@ -69,24 +121,30 @@ const GameController = (() => {
     function playTurn() {
         const activePLayer = player1.getActive() ? player1 : player2;
         if (!GameBoard.updateBoard(this, activePLayer.getSymbol())) return;
-        checkWin();
+        this.classList.add('active')
+        if(checkWin()) return;
 
         player1.toggleActive();
         player2.toggleActive();
 
-        this.classList.add('active')
+        if(player2.getActive()) {
+            setTimeout(() => {
+                AIplayer.move();
+            }, 700);
+            DisplayController.disableClick();
+        }
+        else DisplayController.enableClick();
     }
 
     const checkWin = () => {
         const gameBoard = GameBoard.getBoard();
-        const activePLayer = player1.getActive() ? player1 : player2;
 
         //Check rows
         let i = 0;
         while (i < gridSize*gridSize) {
             if (gameBoard[i+1] == gameBoard[i] && gameBoard[i+2] == gameBoard[i+1] && gameBoard[i]) {
-                DisplayController.endGame(activePLayer);
-                return;
+                endGame(false, [i, i+1, i+2]);
+                return true;
             }
             i+=3;
         }
@@ -95,33 +153,47 @@ const GameController = (() => {
         i = 0;
         while (i < gridSize*gridSize) {
             if (gameBoard[i+3] == gameBoard[i] && gameBoard[i+6] == gameBoard[i+3] && gameBoard[i]) {
-                DisplayController.endGame(activePLayer);
-                return;
+                endGame(false, [i, i+3, i+6]);
+                return true;
             }
             i++;
         }
 
         //Check diag
         if (gameBoard[0] == gameBoard[4] && gameBoard[4] == gameBoard[8] && gameBoard[0]) {
-            DisplayController.endGame(activePLayer);
-            return;
+            endGame(false, [0, 4, 8]);
+            return true;
         }
 
         //Check anti-diag
         else if (gameBoard[2] == gameBoard[4] && gameBoard[4] == gameBoard[6] && gameBoard[2]) {
-            DisplayController.endGame(activePLayer);
-            return;
+            endGame(false, [2, 4, 6]);
+            return true;
         }
 
         //Check draw
         for (let i = 0; i < gameBoard.length; i++) {
-            if (gameBoard[i] === undefined) return;
+            if (gameBoard[i] === 0) return false;
         }
-        DisplayController.endGame(activePLayer, true)
+        endGame(true, []);
+        return false;
+    }
+
+    const endGame = (isDraw, winArray) => {
+        const activePLayer = player1.getActive() ? player1 : player2;
+        if (!isDraw) activePLayer.setWinner();
+        else {
+            activePLayer.setActive(false);
+            player1.setDraw();
+            player2.setDraw();
+        }
+        DisplayController.endGame(winArray);
     }
 
 
     const restartGame = () => {
+        player1.reset();
+        player2.reset();
         init();
     }
 
@@ -154,17 +226,33 @@ const DisplayController = (() => {
         }
     }
 
-    const endGame = (winner, draw = false) => {
-        if (draw) {console.log('draw');}
-        console.log(winner.getName()); 
+    const enableClick = () => {
+        const $squares = $board.childNodes;
+        $squares.forEach(square => square.addEventListener('click', GameController.playTurn));
+    }
 
-        $board.childNodes.forEach(square => 
-            square.removeEventListener('click', GameController.playTurn));
+    const disableClick = () => {
+        const $squares = $board.childNodes;
+
+        for (let i = 0; i < $squares.length; i++) {
+            $squares[i].removeEventListener('click', GameController.playTurn);
+        }
+    }
+
+    const endGame = (winArray) => {        
+        const $squares = $board.childNodes;
+
+        for (let i = 0; i < $squares.length; i++) {
+            $squares[i].removeEventListener('click', GameController.playTurn);
+            if (winArray.includes(i)) $squares[i].classList.add('win');
+        }
     }
 
     return {
         init,
         renderGameBoard,
+        enableClick,
+        disableClick,
         endGame,
     };
 

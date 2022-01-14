@@ -6,6 +6,8 @@
     --player-border: rgb(255, 47, 162);
     --shadow:rgba(0, 0, 0, 0.4);
     --game-symbol: rgb(255, 255, 255);
+    --win: greenyellow;
+    --draw: red;
 }
 
 body {
@@ -31,11 +33,17 @@ body {
     font-weight: 1000;
     color: var(--board-border);
     opacity: 80%;
+    transition: all 0.5s;
 }
 
 .heading .sec {
     color: var(--player-border);
     font-size: 55px;
+    
+}
+
+.main .heading:hover {
+    transform: rotate(5deg);
 }
 
 /* Players */
@@ -44,6 +52,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     color: var(--game-symbol);
     transition: all 0.3s;
@@ -55,6 +64,14 @@ body {
     font-size: 20px;
     font-weight: 500;
     color: var(--board-border);
+    
+}
+
+.player .status {
+    opacity: 0;
+    height: 20px;
+    width: auto;
+    transition: all 0.3s;
 }
 
 
@@ -64,6 +81,7 @@ img {
     padding: 20px;
     border: 1px solid var(--board-border);
     border-radius: 50%;
+    transition: all 0.3s;
 }
 
 .player.active {
@@ -76,6 +94,19 @@ img {
 
 .player.active .symbol {
     color: var(--player-border);
+    transition: all 0.3s;
+}
+
+.player.winner img, .player.winner .symbol, .player.winner .status {
+    opacity: 1;
+    color: var(--win);
+    border-color: var(--win);
+}
+
+.player.draw img, .player.draw .symbol, .player.draw .status {
+    opacity: 1;
+    color: var(--draw);
+    border-color: var(--draw);
 }
 
 /* GameBoard */
@@ -108,10 +139,10 @@ img {
     align-items: center;
     color: var(--game-symbol);
     color: var(--game-symbol);
-    font-weight: 1000;
+    font-weight: 400;
     cursor: pointer;
     font-size: 0px;
-    transition: all 0.3s;
+    transition: font-size 0.2s, text-shadow 1s;
 }
 
 div.index-2, div.index-5, div.index-8 {
@@ -124,6 +155,10 @@ div.index-6, div.index-7, div.index-8 {
 
 .board div.active {
     font-size: 48px;
+}
+
+.board div.win {
+    text-shadow: 3px 5px 2px var(--player-border);
 }
 
 /* Buttons */
@@ -150,6 +185,7 @@ div.index-6, div.index-7, div.index-8 {
     padding: 10px 30px;
     border-radius: 50px;
     font-size: 16px;
+    font-weight: 800;
 }
 
 
