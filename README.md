@@ -9,4 +9,4 @@ Made with:
 - CSS
 - JavaScript
 
-Learning outcome -> Constructor functions and Module pattern
+Learing about Factory functions and Module pattern for Javascript was the primary focus of the project
